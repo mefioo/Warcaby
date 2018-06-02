@@ -1,11 +1,12 @@
 #include "pionek.h"
 
 
-pionek::pionek(char _kolor, int x, int y)
+pionek::pionek(char _kolor, int x, int y, int _index)
 {
 	kolor = _kolor;
 	pozycja_x = x;
 	pozycja_y = y;
+	index = _index;
 	dama = false;
 	zbicie = false;
 }
@@ -33,6 +34,12 @@ int pionek::zwroc_y()
 char pionek::zwroc_kolor()
 {
 	return kolor;
+}
+
+
+int pionek::zwroc_index()
+{
+	return index;
 }
 
 void pionek::zmien_pozycje(int x, int y)
@@ -66,4 +73,3 @@ bool pionek::czy_zbity()
 	else
 		return false;
 }
-
