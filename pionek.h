@@ -24,8 +24,10 @@ public:
 	void zmien_pozycje(int x, int y);
 	void ustaw_dame();
 	void ustaw_zbicie();
+	void ustaw_niezbity();
 	bool czy_dama();
 	bool czy_zbity();
+	void ustaw_pozycje(int x, int y);
 
 };
 

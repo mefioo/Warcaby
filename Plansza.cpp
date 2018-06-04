@@ -31,11 +31,13 @@ plansza::plansza()
 				pionek *_pionek = new pionek(kolor, i, j, index);
 				plansza_pionkow.push_back(_pionek);
 				pole[i][j] = pom;
+				index++;
 				if (i % 2 == 1)
 					j--;
 			}
 		}
 	}
+
 }
 
 plansza::~plansza()
@@ -124,10 +126,25 @@ int plansza::zwroc_pole(int x, int y)
 	return pole[x][y];
 }
 
+int plansza::zwroc_wartosc_pola(int x, int y)
+{
+	return tab[x][y];
+}
+
+int plansza::zwroc_wartosc_tab(int x, int y)
+{
+	return tab[x][y];
+}
+
 bool plansza::czy_puste_pole(int x, int y)
 {
-	if (pole[x][y] == 0)
-		return true;
+	if (x >= 0 && x <= 7 && y >= 0 && y <= 7)
+	{
+		if (pole[x][y] == 0)
+			return true;
+		else
+			return false;
+	}
 	else
 		return false;
 }
@@ -147,6 +164,8 @@ bool plansza::czy_poprawny_ruch(pionek *p, int _x, int _y)
 		kolor = -1;
 	if (p->czy_dama() == false)
 	{
+		if (abs(x - _x) != 1 || abs(y - _y) != 1)
+			return false;
 		if (czy_puste_pole(_x, _y) == true)
 		{
 
@@ -225,6 +244,22 @@ bool plansza::czy_poprawny_ruch(pionek *p, int _x, int _y)
 	return false;
 }
 
+int plansza::wartosc_planszy()
+{
+	int i = 0, j = 0, czarne = 0, biale = 0;
+	for (i = 0; i < 12; i++)
+	{
+		if (zwroc_pionek(i)->czy_zbity() == false)
+			biale += tab[zwroc_pionek(i)->zwroc_x()][zwroc_pionek(i)->zwroc_y()];
+	}
+	for (i = 12; i < 24; i++)
+	{
+		if (zwroc_pionek(i)->czy_zbity() == false)
+			czarne += tab[zwroc_pionek(i)->zwroc_x()][zwroc_pionek(i)->zwroc_y()];
+	}
+	return czarne - biale;
+}
+
 bool plansza::czy_koniec()
 {
 	int pom1 = 0, pom2 = 0;
@@ -246,3 +281,79 @@ bool plansza::czy_koniec()
 	else
 		return false;
 }
+
+void plansza::plansza_porownaj(plansza * p)
+{
+	int i, j;
+	for (i = 0; i < 24; i++)
+	{
+		plansza_pionkow[i] = p->zwroc_pionek(i);
+	}
+	for (i = 0; i < 8; i++)
+	{
+		for (j = 0; j < 8; j++)
+			pole[i][j] = p->zwroc_pole(i, j);
+	}
+}
+
+
+void plansza::wykonaj_ruch(int czyj_ruch, int x, int y, int x_pionka, int y_pionka)
+{
+	bool koniec_gry = 0;
+	std::vector<int> mozliwosci;
+	int x1, y1, liczba_ruchow = 0, pom1 = 0, pom2 = 0, los1, los2, powtorz = 1;
+
+
+	if ((zwroc_pole(x, y) == 1 && czyj_ruch == 2) || ((zwroc_pole(x, y) == 2 && czyj_ruch == 1)))
+	{
+		zwroc_pionek(x, y)->ustaw_zbicie();
+		zwroc_pionek(x, y)->zmien_pozycje(-10, -10);
+		zwroc_pionek(x_pionka, y_pionka)->zmien_pozycje(x, y);
+		ustaw_pole(x, y, czyj_ruch);
+		ustaw_pole(x_pionka, y_pionka, 0);
+		if (x_pionka < x)
+			pom1 = 1;
+		else
+			pom1 = -1;
+		if (y_pionka < y)
+			pom2 = 1;
+		else
+			pom2 = -1;
+		x_pionka = x; x += pom1;
+		y_pionka = y; y += pom2;
+	}
+
+	zwroc_pionek(x_pionka, y_pionka)->zmien_pozycje(x, y);
+	if (((x == 0 && czyj_ruch == 2) || (x == 7 && czyj_ruch == 1)) && zwroc_pionek(x, y)->czy_dama() == false)
+		zwroc_pionek(x, y)->ustaw_dame();
+	ustaw_pole(x, y, czyj_ruch);
+	ustaw_pole(x_pionka, y_pionka, 0);
+
+	liczba_ruchow++;
+
+}
+
+bool plansza::czy_bylo_bicie(plansza* szachownica)
+{
+	int i, j, biale1 = 0, biale2 = 0, czarne1 = 0, czarne2 = 0;
+	bool czy_zbicie = false;
+	for (i = 0; i < 8; i++)
+	{
+		for (j = 0; j < 8; j++)
+		{
+			if (pole[i][j] == 1)
+				biale1++;
+			if (pole[i][j] == 2)
+				czarne1++;
+			if (szachownica->zwroc_pole(i, j) == 1)
+				biale2++;
+			if (szachownica->zwroc_pole(i, j) == 2)
+				czarne2++;
+		}
+	}
+	if (biale1 == biale2 && czarne1 == czarne2)
+		return false;
+	else
+		return true;
+}
+

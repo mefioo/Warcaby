@@ -44,8 +44,8 @@ int pionek::zwroc_index()
 
 void pionek::zmien_pozycje(int x, int y)
 {
-	pozycja_x = x;
-	pozycja_y = y;
+		pozycja_x = x;
+		pozycja_y = y;
 }
 
 void pionek::ustaw_dame()
@@ -56,6 +56,11 @@ void pionek::ustaw_dame()
 void pionek::ustaw_zbicie()
 {
 	zbicie = true;
+}
+
+void pionek::ustaw_niezbity()
+{
+	zbicie = false;
 }
 
 bool pionek::czy_dama()
@@ -72,4 +77,10 @@ bool pionek::czy_zbity()
 		return true;
 	else
 		return false;
+}
+
+void pionek::ustaw_pozycje(int x, int y)
+{
+	pozycja_x = x;
+	pozycja_y = y;
 }
